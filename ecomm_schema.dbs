@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="schema.sql" database="PostgreSQL" id="99b9497b-87dc-4c04-b9cf-976a7873d7bd" >
+	<schema name="enums" options="enums" >
+		<udt name="cart_status_enum" udt_java_type="12" udt_precision="NONE" sync_priority="900" >
+			<udt_script><![CDATA[CREATE TYPE ${name} AS ENUM (
+	'active', 
+	'ordered',
+	'cancelled')]]></udt_script>
+		</udt>
+		<udt name="order_status_enum" udt_java_type="12" udt_precision="NONE" sync_priority="900" >
+			<udt_script><![CDATA[CREATE TYPE ${name} AS ENUM (
+	'pending', 
+	'processing',
+	'shipped',
+	'delivered',
+	'cancelled',
+	'returned')]]></udt_script>
+		</udt>
+	</schema>
+	<schema name="public" >
+		<table name="carts" spec="" >
+			<column name="id" type="integer" jt="4" mandatory="y" >
+				<identity><![CDATA[GENERATED  ALWAYS AS IDENTITY]]></identity>
+			</column>
+			<column name="user_id" type="integer" jt="4" mandatory="y" />
+			<column name="cart_status" type="varchar" jt="12" />
+			<column name="cart_created" type="timestamptz" jt="93" mandatory="y" />
+			<column name="cart_status_updated" type="timestamptz" jt="93" />
+			<index name="pk_customers_carts" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="unq_customers_carts_user_id" unique="UNIQUE_KEY" options="WHERE cart_status = &#039;active&#039;" >
+				<column name="user_id" />
+			</index>
+		</table>
+		<table name="carts_items" spec="" >
+			<column name="cart_id" type="integer" jt="4" mandatory="y" />
+			<column name="product_id" type="integer" jt="4" mandatory="y" />
+			<column name="quantity" type="numeric" length="7" decimal="2" jt="2" mandatory="y" />
+			<column name="price" type="numeric" length="7" decimal="2" jt="2" mandatory="y" />
+			<constraint name="CK_carts_items" type="CHECK" options="" >
+				<string><![CDATA[quantity > 0]]></string>
+			</constraint>
+		</table>
+		<table name="customers" spec="" >
+			<column name="id" type="integer" jt="4" mandatory="y" >
+				<identity><![CDATA[GENERATED  ALWAYS AS IDENTITY]]></identity>
+			</column>
+			<column name="first_name" type="varchar" length="50" jt="12" mandatory="y" />
+			<column name="last_name" type="varchar" length="50" jt="12" mandatory="y" />
+			<column name="street_address" type="varchar" length="100" jt="12" mandatory="y" />
+			<column name="apt_number" type="varchar" length="10" jt="12" />
+			<column name="city" type="varchar" length="50" jt="12" mandatory="y" />
+			<column name="state" type="varchar" length="2" jt="12" mandatory="y" />
+			<column name="zip_code" type="varchar" length="10" jt="12" mandatory="y" />
+			<column name="password_hashed" type="text" jt="12" mandatory="y" />
+			<column name="email" type="varchar" length="50" jt="12" mandatory="y" />
+			<index name="pk_customers" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="unq_customers_email" unique="UNIQUE_KEY" >
+				<column name="email" />
+			</index>
+		</table>
+		<table name="orders" spec="" >
+			<column name="id" type="integer" jt="4" mandatory="y" >
+				<identity><![CDATA[GENERATED   ALWAYS AS IDENTITY]]></identity>
+			</column>
+			<column name="cart_id" type="integer" jt="4" mandatory="y" />
+			<column name="order_date" type="timestamptz" jt="93" mandatory="y" />
+			<column name="order_status" type="varchar" jt="12" mandatory="y" />
+			<column name="order_cancelled" type="timestamptz" jt="93" />
+			<column name="total_order_sales" type="numeric" length="10" decimal="2" jt="2" mandatory="y" />
+			<index name="pk_orders_id" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="unq_orders_cart" unique="UNIQUE_KEY" >
+				<column name="cart_id" />
+			</index>
+			<fk name="fk_orders_user_id" to_schema="public" to_table="customers" delete_action="cascade" options="" >
+				<fk_column pk="id" />
+			</fk>
+		</table>
+		<table name="products" spec="" >
+			<column name="id" type="integer" jt="4" mandatory="y" >
+				<identity><![CDATA[GENERATED  ALWAYS AS IDENTITY]]></identity>
+			</column>
+			<column name="name" type="varchar" length="100" jt="12" mandatory="y" />
+			<column name="description" type="varchar" length="1000" jt="12" mandatory="y" />
+			<column name="price" type="numeric" length="7" decimal="2" jt="2" mandatory="y" />
+			<column name="inventory_units" type="integer" jt="4" mandatory="y" >
+				<defo><![CDATA[0]]></defo>
+			</column>
+			<index name="pk_products" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+		</table>
+	</schema>
+	<layout name="Diagram" id="0b3a7cfa-1c30-4d07-82ca-565fc05456c1" show_relation="columns" >
+		<callout x="1691" y="57" pointer="Round" >
+			<comment><![CDATA[Add tables to the diagram (here) by drag & drop from the Project Tree.
+Drop this callout from its right-click pop-up.]]></comment>
+		</callout>
+		<callout x="1691" y="57" pointer="Round" >
+			<comment><![CDATA[Add tables to the diagram (here) by drag & drop from the Project Tree.
+Drop this callout from its right-click pop-up.]]></comment>
+		</callout>
+		<callout x="3325" y="57" pointer="Round" >
+			<comment><![CDATA[Add tables to the diagram (here) by drag & drop from the Project Tree.
+Drop this callout from its right-click pop-up.]]></comment>
+		</callout>
+		<callout x="1691" y="57" pointer="Round" >
+			<comment><![CDATA[Add tables to the diagram (here) by drag & drop from the Project Tree.
+Drop this callout from its right-click pop-up.]]></comment>
+		</callout>
+		<callout x="3325" y="57" pointer="Round" >
+			<comment><![CDATA[Add tables to the diagram (here) by drag & drop from the Project Tree.
+Drop this callout from its right-click pop-up.]]></comment>
+		</callout>
+		<callout x="3325" y="57" pointer="Round" >
+			<comment><![CDATA[Add tables to the diagram (here) by drag & drop from the Project Tree.
+Drop this callout from its right-click pop-up.]]></comment>
+		</callout>
+		<callout x="4959" y="57" pointer="Round" >
+			<comment><![CDATA[Add tables to the diagram (here) by drag & drop from the Project Tree.
+Drop this callout from its right-click pop-up.]]></comment>
+		</callout>
+		<callout x="57" y="57" pointer="Round" >
+			<comment><![CDATA[Add tables to the diagram (here) by drag & drop from the Project Tree.
+Drop this callout from its right-click pop-up.]]></comment>
+		</callout>
+	</layout>
+</project>
